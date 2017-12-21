@@ -34,6 +34,7 @@ class MqttPubSubSpec(_system: ActorSystem) extends TestKit(_system) with Implici
     p.future.andThen { case _ => task.cancel() }
   }
 
+
   "MqttPubSub" must {
     "start, subscribe, publish & receive messages" in {
       pubsub.stateName shouldBe DisconnectedState
@@ -48,7 +49,7 @@ class MqttPubSubSpec(_system: ActorSystem) extends TestKit(_system) with Implici
 
       pubsub.children.map(_.path.name) should contain(URLEncoder.encode(topic, "utf-8"))
 
-      val payload = "12345".getBytes("utf-8")
+      val payload = "data".getBytes("utf-8")
       pubsub ! new Publish(topic, payload, 2)
 
       val msg = expectMsgType[Message](10.seconds)
@@ -56,18 +57,25 @@ class MqttPubSubSpec(_system: ActorSystem) extends TestKit(_system) with Implici
       msg.payload shouldEqual payload
     }
 
-    "unsubscirbe" in {
+    "unsubscribe" in {
       val probe = TestProbe()
       val topic = "paho-akka/MqttPubSubSpec/" + Random.nextLong()
       val subscribe = Subscribe(topic, probe.ref, 2)
+
       pubsub ! subscribe
-      probe.expectMsg(SubscribeAck(subscribe, None))
+      probe.expectMsg(10.seconds, SubscribeAck(subscribe, None))
+
       pubsub.children.map(_.path.name) should contain(URLEncoder.encode(topic, "utf-8"))
 
-      probe.ref ! PoisonPill
-      akka.pattern.after(1.seconds, system.scheduler)(Future(pubsub.children))
-        .futureValue.map(_.path.name) should not contain URLEncoder.encode(topic, "utf-8")
+      pubsub ! Unsubscribe(topic, probe.ref)
+      probe.expectMsg(UnsubscribeAck(topic))
+
+      val payload = "data".getBytes("utf-8")
+      pubsub ! new Publish(topic, payload, 2)
+
+      probe.expectNoMsg()
     }
+
   }
 
   override implicit def patienceConfig: PatienceConfig = PatienceConfig(Span(20, Seconds), Span(1, Second))

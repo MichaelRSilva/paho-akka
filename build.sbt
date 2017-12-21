@@ -6,6 +6,7 @@ name := "paho-akka-evolution"
 version := "1.5.0"
 
 scalaVersion := "2.12.3"
+
 crossScalaVersions := Seq("2.11.11", "2.12.3")
 
 scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8")
@@ -13,6 +14,10 @@ scalacOptions ++= (CrossVersion.scalaApiVersion(scalaVersion.value) match {
   case Some((2, 11)) => Seq("-Ybackend:GenBCode")
   case _ => Nil
 })
+
+bintrayOrganization := None
+
+bintrayRepository := "maven"
 
 resolvers += "Paho Releases" at "https://repo.eclipse.org/content/repositories/paho-releases"
 
