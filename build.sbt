@@ -1,7 +1,7 @@
 import sbt.internal.util.ManagedLogger
 
-organization := "com.sandinh"
-name := "paho-akka"
+organization := "io.michaelsilva"
+name := "paho-akka-evolution"
 
 version := "1.5.0"
 
@@ -40,6 +40,9 @@ lazy val pahoLib = {
     case v => lib % v from pahoSnapshotUrl()
   }
 }
+
+licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
+
 
 libraryDependencies ++= Seq(
   pahoLib,

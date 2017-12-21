@@ -10,6 +10,10 @@ case class Subscribe(topic: String, ref: ActorRef, qos: Int = 0)
 
 case class SubscribeAck(subscribe: Subscribe, fail: Option[Throwable])
 
+case class Unsubscribe(topic: String, ref: ActorRef)
+
+case class UnsubscribeAck(topic: String)
+
 class Message(val topic: String, val payload: Array[Byte])
 
 /** This class wrap params for publishing to mqtt.
