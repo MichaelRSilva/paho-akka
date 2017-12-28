@@ -3,7 +3,7 @@ import sbt.internal.util.ManagedLogger
 organization := "io.michaelsilva"
 name := "paho-akka-evolution"
 
-version := "1.5.0"
+version := "1.5.1"
 
 scalaVersion := "2.12.3"
 
